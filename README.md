@@ -31,7 +31,20 @@ bibtex cnrs
 pdflatex main.tex
 ```
 
-Ou importer directement les `.bib` dans Zotero, JabRef, ou Overleaf.
+## 📥 Script de téléchargement
+
+Le script `fetch_resources.py` parse les fichiers `.bib` et télécharge automatiquement les ressources (PDF/HTML) dans `downloads/<catégorie>/`.
+
+```bash
+python fetch_resources.py
+```
+
+Options :
+- `--no-verify-ssl` : désactive la vérification SSL (utile pour certains sites CNRS avec certificats internes)
+
+### Limitations connues
+- **Légifrance** et **EUR-Lex** bloquent les requêtes automatisées (403 / challenge anti-bot). Les textes législatifs doivent être téléchargés manuellement ou via un navigateur.
+- Le script injecte un champ `file = {downloads/...}` dans chaque entrée BibTeX pour pointer vers la copie locale quand le téléchargement réussit.
 
 ## 📜 Licence
 
