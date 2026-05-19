@@ -77,6 +77,23 @@ def fetch(url, dest_path, verify_ssl=True):
 # LOGIQUE PRINCIPALE
 # ---------------------------------------------------------------------------
 
+def list_urls(bib_path):
+    """Affiche la liste des URLs contenues dans un .bib, par entrée."""
+    raw = bib_path.read_text(encoding="utf-8")
+    entries = re.split(r"(?=@\w+\{)", raw)
+    for block in entries:
+        if not block.strip():
+            continue
+        key_match = re.search(r"@\w+\{(\S+),", block)
+        if not key_match:
+            continue
+        key = key_match.group(1)
+        urls = extract_urls(block)
+        if urls:
+            for url in urls:
+                print(f"{bib_path.stem}\t{key}\t{url}")
+
+
 def process_bib_file(bib_path, category_dir, verify_ssl=True):
     """Parse un .bib, télécharge les ressources, met à jour les entrées."""
     raw = bib_path.read_text(encoding="utf-8")
@@ -142,11 +159,22 @@ def main():
         action="store_true",
         help="Désactiver la vérification des certificats SSL (utile pour certains sites CNRS).",
     )
+    parser.add_argument(
+        "--urls-only", "-u",
+        action="store_true",
+        help="Affiche uniquement la liste des URLs (catégorie, clé, URL) sans télécharger.",
+    )
     args = parser.parse_args()
 
     if not BIBTEX_DIR.exists():
         print(f"Dossier {BIBTEX_DIR} introuvable.", file=sys.stderr)
         sys.exit(1)
+
+    if args.urls_only:
+        print("# category\tkey\turl")
+        for bib_file in sorted(BIBTEX_DIR.glob("*.bib")):
+            list_urls(bib_file)
+        sys.exit(0)
 
     DOWNLOADS_DIR.mkdir(exist_ok=True)
 

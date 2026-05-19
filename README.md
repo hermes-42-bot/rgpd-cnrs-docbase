@@ -36,11 +36,18 @@ pdflatex main.tex
 Le script `fetch_resources.py` parse les fichiers `.bib` et télécharge automatiquement les ressources (PDF/HTML) dans `downloads/<catégorie>/`.
 
 ```bash
+# Télécharger toutes les ressources
 python fetch_resources.py
+
+# Lister uniquement les URLs (sans télécharger)
+python fetch_resources.py --urls-only
+# ou
+python fetch_resources.py -u
 ```
 
 Options :
 - `--no-verify-ssl` : désactive la vérification SSL (utile pour certains sites CNRS avec certificats internes)
+- `--urls-only` (`-u`) : affiche la liste des URLs au format TSV (`catégorie  clé  url`) sans télécharger
 
 ### Limitations connues
 - **Légifrance** et **EUR-Lex** bloquent les requêtes automatisées (403 / challenge anti-bot). Les textes législatifs doivent être téléchargés manuellement ou via un navigateur.
